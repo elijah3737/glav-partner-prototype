@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glav · Партнёрская программа — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · macrostructure: Workbench · genre: modern-minimal (playful-soft) · theme: studied-DNA (source: glav.ru)
+ * observed: font Mulish · accent #227CD2 · paper radial #edf0f5→#ced0db · pill radius 100px · card radius 20-26px · ink #333
+ * pre-emit critique: P5 H5 E4 S5 R5 V4 · one-screen: landing + cabinet fit 100vh */
+:root{
+  --blue:#227cd2; --blue-2:#1b64ab; --blue-3:#154e85;
+  --blue-soft:#e9f2fc; --blue-soft-2:#d7e8fa;
+  --ink:#2f2f38; --ink-2:#5c5e6a; --ink-3:#9296a3;
+  --bg1:#eef1f6; --bg2:#ced0db;
+  --card:#ffffff; --line:#e7eaf1; --line-2:#dfe3ec;
+  --gold:#c98a2b; --gold-soft:#fbf1df;
+  --rose:#c2485a; --rose-soft:#fbe9ec;
+  --green:#2f9e6f; --green-soft:#e4f5ee;
+
+  --font:"Mulish",system-ui,sans-serif;
+  --r-card:26px; --r-mid:18px; --r-field:14px; --pill:100px;
+  --sh:0 24px 60px -34px rgba(40,52,84,.30);
+  --sh-sm:0 1px 2px rgba(40,52,84,.05),0 10px 30px -18px rgba(40,52,84,.20);
+  --sh-lift:0 1px 2px rgba(40,52,84,.05),0 22px 50px -28px rgba(40,52,84,.34);
+  --sh-bal:0 1px 2px rgba(40,52,84,.05),0 24px 52px -26px rgba(34,124,210,.30);
+  --ease:cubic-bezier(.2,.7,.3,1); --dur:.2s;
+  --bar:40px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:clip}
+body{
+  font-family:var(--font);color:var(--ink);
+  background:radial-gradient(125% 120% at 28% 12%,var(--bg1) 0%,var(--bg2) 100%) fixed;
+  min-height:100vh;padding-top:var(--bar);-webkit-font-smoothing:antialiased;line-height:1.45;
+}
+h1,h2,h3{font-weight:800;letter-spacing:-.02em;line-height:1.05;overflow-wrap:anywhere;color:var(--ink)}
+button{font-family:inherit;cursor:pointer}
+.mono,.codebig,.bal .amt,.stat .v,.fee,.modal .avail,.cl-date,.cl-phone,.bal .sub b{font-variant-numeric:tabular-nums lining-nums}
+.blue{color:var(--blue)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:none;
+  font-family:inherit;font-weight:800;font-size:15px;color:#fff;background:var(--blue);
+  border-radius:var(--pill);padding:15px 26px;transition:all var(--dur) var(--ease);
+  box-shadow:0 8px 20px -10px rgba(34,124,210,.6)}
+.btn:hover{background:var(--blue-2);transform:translateY(-1px);box-shadow:0 12px 26px -10px rgba(34,124,210,.6)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible{outline:3px solid var(--blue-soft-2);outline-offset:2px}
+.btn:disabled{background:#c7cbd6;box-shadow:none;cursor:not-allowed}
+.btn .ar{font-size:15px;transition:transform var(--dur) var(--ease)}
+.btn:hover .ar{transform:translate(2px,-2px)}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.btn.ghost:hover{background:var(--blue-soft);color:var(--blue-2);box-shadow:inset 0 0 0 1.5px var(--blue-soft-2)}
+.btn.sm{padding:10px 18px;font-size:13.5px}
+
+/* prototype switcher */
+.proto{position:fixed;top:0;left:0;right:0;height:var(--bar);z-index:100;display:flex;align-items:center;gap:14px;
+  padding:0 20px;background:#ffffffcc;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.proto b{font-weight:800;font-size:12px;letter-spacing:.1em;color:var(--ink)}
+.proto .mut{font-size:12px;color:var(--ink-3)}
+.proto-nav{display:flex;gap:5px;margin-left:auto}
+.proto-nav button{background:transparent;border:none;color:var(--ink-2);font-weight:700;font-size:12.5px;
+  padding:6px 13px;border-radius:var(--pill);transition:all var(--dur) var(--ease)}
+.proto-nav button:hover{background:var(--blue-soft);color:var(--blue-2)}
+.proto-nav button[aria-current="true"]{background:var(--blue);color:#fff}
+.proto-nav button:focus-visible{outline:2px solid var(--blue-soft-2);outline-offset:2px}
+
+.screen{display:none}
+.screen.on{display:block;animation:f var(--dur) var(--ease)}
+@keyframes f{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:5px 12px;border-radius:var(--pill);white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.new{color:var(--blue);background:var(--blue-soft)}
+.pill.talk{color:var(--gold);background:var(--gold-soft)}
+.pill.paid{color:var(--green);background:var(--green-soft)}
+.pill.lost{color:var(--rose);background:var(--rose-soft)}
+
+/* ===================== LANDING — one screen ===================== */
+#landing .lp{height:calc(100vh - var(--bar));display:flex;flex-direction:column;padding:22px clamp(20px,4vw,56px) 26px;gap:18px}
+.lp-head{display:flex;align-items:center;justify-content:space-between;flex:none}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:22px;letter-spacing:-.03em}
+.brand i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:linear-gradient(160deg,#2f8ce0,#1b64ab);color:#fff;font-style:normal;font-size:17px;font-weight:900;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 6px 14px -6px rgba(34,124,210,.55)}
+.lp-head .tel{font-weight:800;font-size:15px}
+.lp-head .tel span{color:var(--ink-3);font-weight:700;margin-right:10px}
+
+.hero-card{flex:1;background:var(--card);border-radius:34px;box-shadow:var(--sh);position:relative;overflow:hidden;
+  display:grid;grid-template-columns:1.08fr .92fr;min-height:0}
+.hero-l{padding:clamp(26px,4vh,52px) clamp(28px,3.2vw,54px);display:flex;flex-direction:column;justify-content:center}
+.ey{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;font-size:12px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--blue);background:var(--blue-soft);padding:7px 14px;border-radius:var(--pill);margin-bottom:20px}
+.hero-l h1{font-size:clamp(2.1rem,4vw,3.5rem);font-weight:900}
+.hero-l h1 em{font-style:normal;color:var(--blue)}
+.hero-l .sub{font-size:clamp(15px,1.3vw,18px);color:var(--ink-2);max-width:38ch;margin:18px 0 24px;font-weight:500}
+.pts{display:flex;flex-direction:column;gap:11px}
+.pt{display:flex;gap:12px;align-items:center;font-size:14.5px;font-weight:600;color:var(--ink-2)}
+.pt i{flex:none;width:26px;height:26px;border-radius:9px;background:var(--blue-soft);color:var(--blue-2);display:grid;place-items:center;font-style:normal;font-weight:900;font-size:13px}
+.pt b{color:var(--ink);font-weight:800}
+
+.hero-r{background:linear-gradient(180deg,#f7f9fc,#eef2f8);border-left:1px solid var(--line);
+  padding:clamp(24px,3.4vh,46px) clamp(26px,2.6vw,44px);display:flex;flex-direction:column;justify-content:center;position:relative}
+.hero-r .arrow{position:absolute;top:26px;right:26px;width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:19px;box-shadow:0 10px 22px -10px rgba(34,124,210,.7)}
+.hero-r h2{font-size:clamp(1.4rem,1.9vw,1.9rem);font-weight:900}
+.hero-r .h2sub{font-size:13.5px;color:var(--ink-2);margin:6px 0 20px;font-weight:600}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:800;margin-bottom:7px;color:var(--ink-2)}
+.field input{width:100%;font-family:inherit;font-size:15.5px;font-weight:600;padding:14px 16px;border:1.5px solid var(--line-2);
+  border-radius:var(--r-field);background:#fff;color:var(--ink);transition:all var(--dur) var(--ease)}
+.field input::placeholder{color:var(--ink-3);font-weight:500}
+.field input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-soft)}
+.field input.code{letter-spacing:.3em;font-weight:800;font-size:21px;text-align:center}
+.consent{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ink-2);margin:6px 0 16px;font-weight:500;line-height:1.4}
+.consent input{margin-top:2px;accent-color:var(--blue);width:15px;height:15px;flex:none}
+.consent a{color:var(--blue);font-weight:700}
+.hero-r .btn{width:100%}
+.formnote{font-size:11.5px;color:var(--ink-3);text-align:center;margin-top:11px;font-weight:600}
+.ok-state{text-align:center;display:none}
+.ok-state .ok{width:66px;height:66px;margin:0 auto 18px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-size:32px;font-weight:900}
+.ok-state h2{font-size:1.7rem}
+.ok-state p{color:var(--ink-2);font-weight:600;margin:12px auto 0;max-width:30ch;font-size:14px}
+
+/* ===================== LOGIN ===================== */
+#login .auth{height:calc(100vh - var(--bar));display:grid;place-items:center;padding:20px}
+.auth-card{width:100%;max-width:400px;background:#fff;border-radius:var(--r-card);padding:40px 36px;box-shadow:var(--sh)}
+.auth-card .brand{justify-content:center;margin-bottom:6px}
+.auth-card h1{text-align:center;font-size:1.55rem;margin-bottom:26px}
+.auth-card .btn{width:100%;margin-top:6px}
+.auth-foot{text-align:center;font-size:12.5px;color:var(--ink-2);margin-top:18px;font-weight:600}
+.auth-foot a{color:var(--blue);font-weight:800}
+
+/* ===================== CABINET — full width, one screen ===================== */
+#cabinet .app{height:calc(100vh - var(--bar));display:flex;flex-direction:column}
+.app-top{flex:none;display:flex;align-items:center;gap:22px;padding:14px clamp(20px,3vw,48px);
+  background:#ffffffcc;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.app-nav{display:flex;gap:4px;margin-left:8px}
+.app-nav button{background:transparent;border:none;font-family:inherit;font-size:14px;font-weight:800;color:var(--ink-2);
+  padding:9px 16px;border-radius:var(--pill);transition:all var(--dur) var(--ease)}
+.app-nav button:hover{background:var(--blue-soft);color:var(--blue-2)}
+.app-nav button[aria-current="true"]{background:var(--blue);color:#fff}
+.who{margin-left:auto;display:flex;align-items:center;gap:11px;font-weight:800;font-size:14px}
+.who .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(160deg,#2f8ce0,#1b64ab);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 6px 14px -6px rgba(34,124,210,.5)}
+
+.app-body{flex:1;min-height:0;overflow:auto;padding:clamp(16px,2.2vh,24px) clamp(20px,3vw,48px)}
+.tab{display:none}.tab.on{display:block}
+.hi{font-size:1.4rem;font-weight:800;margin-bottom:4px}
+.greet{font-size:1.05rem;font-weight:700;color:var(--ink-2);margin-bottom:12px}
+.transp{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);font-weight:700;
+  background:var(--blue-soft);border:1px solid transparent;padding:7px 14px 7px 11px;border-radius:var(--pill);margin-bottom:14px}
+.transp b{color:var(--blue-2)}
+.transp svg{width:15px;height:15px;color:var(--blue);flex:none}
+
+.card{background:#fff;border-radius:var(--r-card);padding:20px 24px;border:1px solid var(--line);
+  box-shadow:var(--sh-sm),inset 0 1px 0 #fff;transition:transform .28s var(--ease),box-shadow .28s var(--ease)}
+.card:hover{transform:translateY(-3px);box-shadow:var(--sh-lift),inset 0 1px 0 #fff}
+.card.bal{background:linear-gradient(180deg,#ffffff,#f5f9ff);box-shadow:var(--sh-bal),inset 0 1px 0 #fff}
+.card.bal:hover{transform:translateY(-3px);box-shadow:0 1px 2px rgba(40,52,84,.05),0 32px 62px -28px rgba(34,124,210,.36),inset 0 1px 0 #fff}
+.lab{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px}
+
+/* dashboard grid — one screen */
+.dash{display:grid;grid-template-columns:1fr 1.15fr;grid-template-rows:auto auto;gap:13px;align-items:start}
+.codebox{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.codebig{font-weight:600;font-size:30px;letter-spacing:.14em;line-height:1;color:var(--ink);cursor:pointer;transition:color var(--dur) var(--ease)}
+.codebig:hover{color:var(--blue)}
+.linkrow{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);flex-wrap:wrap}
+.linkrow code{font-size:13px;font-weight:700;color:var(--ink-2);background:transparent;border:1px solid var(--line);padding:9px 13px;border-radius:11px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;transition:border var(--dur) var(--ease)}
+.linkrow code:hover{border-color:var(--blue-soft-2)}
+.bal .amt{font-weight:900;font-size:52px;line-height:1;letter-spacing:-.005em;color:var(--blue)}
+.bal .amt small{font-size:24px;color:var(--ink-3)}
+.bal .sub{display:flex;gap:28px;margin:14px 0 10px;flex-wrap:wrap}
+.bal .sub div{font-size:12.5px;color:var(--ink-2);font-weight:600}
+.bal .sub b{display:block;font-size:15px;color:var(--ink-2);font-weight:700;margin-top:3px}
+.bal .btn{width:100%}
+.track{height:6px;border-radius:100px;background:var(--blue-soft);overflow:hidden;margin:0 0 14px}
+.track i{display:block;height:100%;width:50%;background:var(--blue);border-radius:100px}
+.statrow{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.stat{background:#fff;border-radius:var(--r-mid);padding:15px 18px;border:1px solid var(--line);
+  box-shadow:var(--sh-sm),inset 0 1px 0 #fff;transition:transform .28s var(--ease),box-shadow .28s var(--ease)}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--sh-lift),inset 0 1px 0 #fff}
+.stat .v{font-weight:600;font-size:26px;letter-spacing:-.01em;color:var(--ink)}
+.stat .k{font-size:12.5px;color:var(--ink-3);margin-top:5px;font-weight:700;display:flex;align-items:center;gap:7px}
+.stat .k::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ink-3)}
+.stat.s-new .k::before{background:var(--blue)}
+.stat.s-talk .k::before{background:var(--gold)}
+.stat.s-paid .k::before{background:var(--green)}
+
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin:14px 0 10px;gap:14px}
+.sec-h h3{font-size:1.05rem;font-weight:800}
+.sec-h a{font-size:13px;font-weight:800;color:var(--blue);cursor:pointer}
+.tablewrap{background:#fff;border-radius:var(--r-mid);box-shadow:var(--sh-sm);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{text-align:left;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);
+  padding:10px 22px;border-bottom:1px solid var(--line)}
+tbody td{padding:9px 22px;border-bottom:1px solid var(--line);font-weight:600}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background var(--dur) var(--ease)}
+tbody tr:hover{background:#f7f9fc}
+.cl-date{color:var(--ink-3);font-weight:700;white-space:nowrap;font-size:12.5px}
+.cl-phone{font-weight:600;color:var(--ink-2);white-space:nowrap}
+.cl-name{font-weight:800;color:var(--ink)}
+.fee{font-weight:800}.fee.on{color:var(--green)}.fee.wait{color:var(--gold);font-weight:700}.fee.no{color:var(--ink-3);font-weight:700}
+.paysum{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px}
+
+/* modal */
+.mbg{position:fixed;inset:0;background:rgba(40,52,84,.42);backdrop-filter:blur(4px);display:none;place-items:center;z-index:200;padding:20px}
+.mbg.on{display:grid;animation:f var(--dur) var(--ease)}
+.modal{background:#fff;border-radius:var(--r-card);width:100%;max-width:460px;padding:34px;box-shadow:0 40px 90px -30px rgba(40,52,84,.5)}
+.modal h3{font-size:1.5rem}.modal .x{float:right;background:none;border:none;font-size:24px;color:var(--ink-3);line-height:1}
+.modal .avail{font-weight:900;font-size:36px;color:var(--blue);margin:14px 0}
+.modal .btn{width:100%;margin-top:14px}
+.modal .note{font-size:12px;color:var(--ink-3);text-align:center;margin-top:12px;font-weight:600}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--ink);color:#fff;
+  font-size:13px;font-weight:800;padding:11px 22px;border-radius:var(--pill);opacity:0;pointer-events:none;
+  transition:all var(--dur) var(--ease);z-index:300}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:900px){
+  .hero-card,.dash{grid-template-columns:1fr}
+  .hero-r{border-left:none;border-top:1px solid var(--line)}
+  .statrow{grid-template-columns:repeat(2,1fr)}
+  .paysum{grid-template-columns:1fr}
+  #landing .lp,#cabinet .app{height:auto}
+  body{padding-top:var(--bar)}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+
+<div class="proto">
+  <b>ПРОТОТИП</b><span class="mut">Партнёрская программа Glav · стиль glav.ru</span>
+  <div class="proto-nav">
+    <button data-go="landing" aria-current="true">Экран клиента</button>
+    <button data-go="login">Вход партнёра</button>
+    <button data-go="cabinet">Кабинет партнёра</button>
+  </div>
+</div>
+
+<!-- ===== CLIENT — one screen ===== -->
+<section class="screen on" id="landing">
+  <div class="lp">
+    <header class="lp-head">
+      <div class="brand"><i>Г</i>ГЛАВ</div>
+      <div class="tel"><span>Бухгалтерия и право</span>+7 495 161‑00‑07</div>
+    </header>
+
+    <div class="hero-card">
+      <div class="hero-l">
+        <span class="ey">● Специальное предложение</span>
+        <h1>Скидка <em>15 000 ₽</em> на бухгалтерию под ключ</h1>
+        <p class="sub">Введите код вашего партнёра и телефон — закрепим скидку, специалист посчитает под ваш бизнес.</p>
+        <div class="pts">
+          <div class="pt"><i>1</i><span><b>Код от партнёра</b> — банковского менеджера</span></div>
+          <div class="pt"><i>2</i><span><b>Бесплатный расчёт</b> под ваши обороты, без обязательств</span></div>
+          <div class="pt"><i>3</i><span><b>Второй месяц в подарок</b> при подключении</span></div>
+        </div>
+      </div>
+
+      <div class="hero-r">
+        <div class="arrow">↗</div>
+        <div id="formWrap">
+          <h2>Активировать скидку</h2>
+          <p class="h2sub">Займёт 20 секунд · оплата не требуется</p>
+          <form id="leadForm">
+            <div class="field"><label for="ph">Ваш телефон</label>
+              <input id="ph" type="tel" inputmode="tel" placeholder="+7 (___) ___‑__‑__" required></div>
+            <div class="field"><label for="cd">Код партнёра</label>
+              <input id="cd" class="code" inputmode="numeric" maxlength="4" value="4471" required></div>
+            <label class="consent"><input type="checkbox" required checked>
+              Согласен на обработку персональных данных и с <a href="#">условиями акции</a> (152‑ФЗ)</label>
+            <button class="btn" type="submit">Активировать скидку <span class="ar">↗</span></button>
+            <p class="formnote">Нажимая кнопку, вы только закрепляете скидку — ничего не оплачиваете.</p>
+          </form>
+        </div>
+        <div class="ok-state" id="okState">
+          <div class="ok">✓</div>
+          <h2>Скидка закреплена</h2>
+          <p>Специалист «Глав» свяжется с вами и посчитает под ваш бизнес. Второй месяц — в подарок.</p>
+          <button class="btn ghost sm" style="margin-top:22px" onclick="resetLead()">← Назад</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LOGIN ===== -->
+<section class="screen" id="login">
+  <div class="auth"><div class="auth-card">
+    <div class="brand"><i>Г</i>ГЛАВ</div>
+    <h1>Кабинет партнёра</h1>
+    <div class="field"><label for="lg">Логин</label><input id="lg" value="ivanov.s"></div>
+    <div class="field"><label for="pw">Пароль</label><input id="pw" type="password" value="••••••••"></div>
+    <button class="btn" data-go="cabinet">Войти в кабинет <span class="ar">↗</span></button>
+    <p class="auth-foot"><a href="#">Забыли пароль?</a> · Доступ выдаёт «Глав»</p>
+  </div></div>
+</section>
+
+<!-- ===== CABINET — full width, one screen ===== -->
+<section class="screen" id="cabinet">
+  <div class="app">
+    <div class="app-top">
+      <div class="brand" style="font-size:18px"><i style="width:28px;height:28px;font-size:14px;border-radius:9px">Г</i>ГЛАВ · Партнёры</div>
+      <nav class="app-nav">
+        <button data-tab="dash" aria-current="true">Дашборд</button>
+        <button data-tab="leads">Мои лиды</button>
+        <button data-tab="pay">Выплаты</button>
+      </nav>
+      <div class="who">Сергей Иванов <span class="av">СИ</span></div>
+    </div>
+
+    <div class="app-body">
+      <!-- dashboard -->
+      <div class="tab on" id="tab-dash">
+        <div class="greet">Здравствуйте, Сергей</div>
+        <div class="transp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Статусы обновляются автоматически из нашей CRM — <b>вы видите ровно то же, что и мы</b></div>
+        <div class="dash">
+          <div class="card bal">
+            <div class="lab">Доступно к выплате</div>
+            <div class="amt">20 000 <small>₽</small></div>
+            <div class="sub"><div>Всего начислено<b>40 000 ₽</b></div><div>Выплачено<b>20 000 ₽</b></div></div>
+            <div class="track" title="Выплачено 20 000 из 40 000 ₽"><i></i></div>
+            <button class="btn" onclick="openWd()">Вывести деньги <span class="ar">↗</span></button>
+          </div>
+          <div class="card">
+            <div class="lab">Ваш код партнёра</div>
+            <div class="codebox"><span class="codebig" onclick="copyText('4471','Код скопирован')" title="Скопировать код">4471</span>
+              <button class="btn ghost sm" onclick="copyText('4471','Код скопирован')">Копировать</button></div>
+            <div class="linkrow"><code onclick="copyText('glav.ru/akciya?code=4471','Ссылка скопирована')" title="Скопировать ссылку">glav.ru/akciya?code=4471</code>
+              <button class="btn ghost sm" onclick="copyText('glav.ru/akciya?code=4471','Ссылка скопирована')">Ссылка</button></div>
+          </div>
+          <div class="statrow">
+            <div class="stat s-new"><div class="v">12</div><div class="k">Лидов всего</div></div>
+            <div class="stat s-talk"><div class="v">3</div><div class="k">В переговорах</div></div>
+            <div class="stat s-paid"><div class="v">4</div><div class="k">Оплачено</div></div>
+          </div>
+        </div>
+        <div class="sec-h"><h3>Последние лиды</h3><a data-tab="leads">Все лиды →</a></div>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Дата</th><th>Имя</th><th>Телефон</th><th>Статус</th><th>Гонорар</th></tr></thead>
+          <tbody>
+            <tr><td class="cl-date">01.07.2026</td><td class="cl-name">Анна Ковалёва</td><td class="cl-phone">+7 (921) 448‑34‑21</td><td><span class="pill new">Новая</span></td><td class="fee wait">ожидается</td></tr>
+            <tr><td class="cl-date">30.06.2026</td><td class="cl-name">Дмитрий Соколов</td><td class="cl-phone">+7 (905) 512‑88‑07</td><td><span class="pill talk">Переговоры</span></td><td class="fee wait">ожидается</td></tr>
+            <tr><td class="cl-date">28.06.2026</td><td class="cl-name">Елена Морозова</td><td class="cl-phone">+7 (916) 730‑12‑55</td><td><span class="pill paid">Оплачено</span></td><td class="fee on">10 000 ₽</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- leads -->
+      <div class="tab" id="tab-leads">
+        <h2 class="hi" style="margin-bottom:14px">Мои лиды</h2>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Дата</th><th>Имя</th><th>Телефон</th><th>Статус в CRM</th><th>Гонорар</th></tr></thead>
+          <tbody>
+            <tr><td class="cl-date">01.07.2026</td><td class="cl-name">Анна Ковалёва</td><td class="cl-phone">+7 (921) 448‑34‑21</td><td><span class="pill new">Новая</span></td><td class="fee wait">ожидается</td></tr>
+            <tr><td class="cl-date">01.07.2026</td><td class="cl-name">Игорь Лебедев</td><td class="cl-phone">+7 (903) 267‑09‑90</td><td><span class="pill new">Новая</span></td><td class="fee wait">ожидается</td></tr>
+            <tr><td class="cl-date">30.06.2026</td><td class="cl-name">Дмитрий Соколов</td><td class="cl-phone">+7 (905) 512‑88‑07</td><td><span class="pill talk">Переговоры</span></td><td class="fee wait">ожидается</td></tr>
+            <tr><td class="cl-date">29.06.2026</td><td class="cl-name">Ольга Новикова</td><td class="cl-phone">+7 (999) 184‑41‑16</td><td><span class="pill talk">Переговоры</span></td><td class="fee wait">ожидается</td></tr>
+            <tr><td class="cl-date">28.06.2026</td><td class="cl-name">Елена Морозова</td><td class="cl-phone">+7 (916) 730‑12‑55</td><td><span class="pill paid">Оплачено</span></td><td class="fee on">10 000 ₽</td></tr>
+            <tr><td class="cl-date">25.06.2026</td><td class="cl-name">Павел Волков</td><td class="cl-phone">+7 (911) 623‑77‑03</td><td><span class="pill paid">Оплачено</span></td><td class="fee on">10 000 ₽</td></tr>
+            <tr><td class="cl-date">18.06.2026</td><td class="cl-name">Сергей Зайцев</td><td class="cl-phone">+7 (925) 490‑63‑12</td><td><span class="pill lost">Отказ</span></td><td class="fee no">—</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- payouts -->
+      <div class="tab" id="tab-pay">
+        <h2 class="hi" style="margin-bottom:16px">Выплаты</h2>
+        <div class="paysum">
+          <div class="stat hl"><div class="v">20 000&nbsp;₽</div><div class="k">Доступно к выплате</div></div>
+          <div class="stat"><div class="v">40 000&nbsp;₽</div><div class="k">Всего начислено</div></div>
+          <div class="stat"><div class="v">20 000&nbsp;₽</div><div class="k">Выплачено</div></div>
+        </div>
+        <button class="btn" onclick="openWd()">Вывести деньги <span class="ar">↗</span></button>
+        <div class="sec-h"><h3>История выплат</h3></div>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Дата</th><th>Сумма</th><th>Статус</th></tr></thead>
+          <tbody>
+            <tr><td class="cl-date">15.06.2026</td><td class="fee">20 000 ₽</td><td><span class="pill paid">Выплачено</span></td></tr>
+            <tr><td class="cl-date">30.05.2026</td><td class="fee">10 000 ₽</td><td><span class="pill paid">Выплачено</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="mbg" id="wd"><div class="modal" id="wdInner">
+  <button class="x" onclick="closeWd()">×</button>
+  <h3>Вывод гонорара</h3>
+  <p style="color:var(--ink-2);font-weight:600;font-size:13.5px;margin-top:4px">Заявка придёт на почту «Глав», деньги переведём по вашим реквизитам.</p>
+  <div class="lab" style="margin-top:18px">Доступно</div><div class="avail">20 000 ₽</div>
+  <div class="field"><label for="rq">Реквизиты для перевода</label><input id="rq" placeholder="Карта / счёт самозанятого"></div>
+  <button class="btn" onclick="doWd()">Запросить вывод <span class="ar">↗</span></button>
+  <p class="note">Гонорар — по договору (самозанятость / ГПХ / агентский)</p>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
+  document.querySelectorAll('.proto-nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.go===id?'true':'false'));
+  window.scrollTo(0,0);}
+function tab(n){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id==='tab-'+n));
+  document.querySelectorAll('.app-nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===n?'true':'false'));
+  document.querySelector('.app-body').scrollTo(0,0);}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)show(g.dataset.go);
+  const t=e.target.closest('[data-tab]');if(t){show('cabinet');tab(t.dataset.tab);}});
+document.getElementById('leadForm').addEventListener('submit',e=>{e.preventDefault();
+  document.getElementById('formWrap').style.display='none';document.getElementById('okState').style.display='block';});
+function resetLead(){document.getElementById('okState').style.display='none';document.getElementById('formWrap').style.display='block';}
+function openWd(){document.getElementById('wd').classList.add('on')}
+function closeWd(){document.getElementById('wd').classList.remove('on')}
+function doWd(){document.getElementById('wdInner').innerHTML='<div style="text-align:center"><div style="width:66px;height:66px;margin:0 auto 16px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-size:32px;font-weight:900">✓</div><h3>Заявка отправлена</h3><p style="color:var(--ink-2);font-weight:600;font-size:13.5px;max-width:30ch;margin:10px auto 0">Заявка на вывод 20 000 ₽ ушла на почту «Глав». Переведём по реквизитам.</p><button class="btn" style="width:100%;margin-top:22px" onclick="closeWd()">Готово</button></div>';}
+document.getElementById('wd').addEventListener('click',e=>{if(e.target.id==='wd')closeWd()});
+function copyText(t,m){try{navigator.clipboard&&navigator.clipboard.writeText(t)}catch(e){}toast(m+' ✓')}
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1700)}
+</script>
+</body>
+</html>
